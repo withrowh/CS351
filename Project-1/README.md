@@ -25,10 +25,39 @@
 	- the relationship of the head, tail, and Node next pointers.
 	- show the size (in bytes) and structure of a Node that allocated six bytes of data
 	- include the bytes pointer, and indicate using an arrow which byte in the allocated memory it points to.**
+	
+```mermaid
+	flowchart LR
+  		subgraph invisibleSubgraph [ ]
+    	direction TB
+    		subgraph N1["Node 1"]
+        	direction TB
+        	A["next*"]
+        	B["numBytes"]
+        	C["bytes*"]
+        	A---B---C
+    		end
+    	subgraph N2["Node 2"]
+    		D["next*"]
+        	E["numBytes = 6"]
+       		F["bytes*"]
+        	D---E---F
+    		end
+  		end
+  	subgraph b2["bytes"]
+    	direction LR
+    	b3["1 byte"]---b4["1 byte"]---b5["1 byte"]---b6["1 byte"]---b7["1 byte"]
+  	end
+    Head(("Head")) --> N1
+    A --> N2
+    C --> b1["bytes"]
+    F --> b2
+    Tail(("Tail"))-->N2
+    D --> nullptr
+    class invisibleSubgraph invisibleBorder;
+    classDef invisibleBorder stroke-width:0px,stroke:transparent;
+```
 
-	```mermaid
-    info
-    ```
 
 **7. There's an overhead to allocating memory, initializing it, and eventually processing (in our case, hashing it). For each program, were any of these tasks the same? Which one(s) were different?**
 
