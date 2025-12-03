@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     //   * the default number of threads
     //
     std::string filename = "data.bin";
-    size_t numThreads = 2;
+    size_t numThreads = 4;
 
     //-----------------------------------------------------------------------
     //
@@ -122,7 +122,6 @@ int main(int argc, char* argv[]) {
     //
     double sum = std::accumulate(std::begin(sums), std::end(sums), 0.0);
 
-    //std::cout << "NumThreads = " << numThreads << "\n";
     std::cout << "Size of Data = " << data.size() << "\n";
     std::cout << "Mean = " << sum / data.size() << "\n";
 }

@@ -9,6 +9,8 @@
 
 #include "Shapes.h"
 
+using DataType = size_t;
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // --- sdf() ---
@@ -48,10 +50,10 @@ int main(int argc, char* argv[]) {
     //   * numSamples - the default number of points to test with
     //   * partitions - how many pieces the generator’s output interval
     //       is split into
-    //   * numThreads - the default number of threads spawnedd
+    //   * numThreads - the default number of threads spawned
     //
-    size_t numSamples = 2'000'000;
-    size_t partitions = 1'000'000;
+    DataType numSamples = 2'000'000;
+    size_t partitions = 1'000;
     size_t numThreads = 4;
 
     //-----------------------------------------------------------------------
@@ -107,7 +109,7 @@ int main(int argc, char* argv[]) {
     //       exiting before their peers
     //
     std::vector<std::jthread>  threads(numThreads);
-    std::vector<size_t>        insidePoints(numThreads);
+    std::vector<DataType>        insidePoints(numThreads);
     std::barrier               barrier(numThreads);
 
     // Computation of how much work a thread should do. (yes, this doesn't
@@ -135,10 +137,9 @@ int main(int argc, char* argv[]) {
     //   (really, you'll need to add four lines to this, one of which is a
     //      closing brace :-)   
     //
-    auto volumePoints = 0;
 
     for (size_t id = 0; id < threads.size(); ++id) {
-        threads[id] = std::jthread{ [&]() {
+        threads[id] = std::jthread{ [&, id]() {
 
             // C++ 11's random number generation system.  These functions
             //   will generate uniformly distributed unsigned integers in
@@ -146,29 +147,39 @@ int main(int argc, char* argv[]) {
             //   helper function rand() (implemented as a lambda)
             std::random_device device;
             std::mt19937 generator(device());
-            std::uniform_int_distribution<unsigned int> uniform(0.0, partitions);
+            std::uniform_int_distribution<DataType> uniform(0, partitions);
 
 
                 // Define a helper function to generate random floating-point
                 //   values in the range [0.0, 1.0]
-                auto rand = [&,partitions]() {
+                auto rand = [&]() {
                     return static_cast<double>(uniform(generator)) / partitions;
                 };
             
-                // Generate points inside the volume cube.  First, create uniformly
-                //   distributed points in the range [0.0, 1.0] for each dimension.
-                vec3 p(rand(), rand(), rand());
-		volumePoints += sdf(p);
+		size_t start = id * chunkSize;
+		size_t stop = std::min(numSamples, start+chunkSize);
 
-            barrier.arrive_and_wait();
+		for(size_t i = start; i < stop; ++i)
+		{
+			// Generate points inside the volume cube.  First, create uniformly
+                	//   distributed points in the range [0.0, 1.0] for each dimension.
+			vec3 p (rand(), rand(), rand());
+			insidePoints[id] += sdf(p);
+		}
+
+		barrier.arrive_and_wait();
         }};
     }
+
+	threads.back().join();
 
     // Add in the last necessary parts for our threaded programs.  These
     //   may include summing up the individual threads' computations, or
     //   having the main thread wait on a thread to keep it from exiting
     //
     // (Look in threaded.cpp for hints)
+
+    DataType volumePoints = std::accumulate(std::begin(insidePoints), std::end(insidePoints), size_t(0));
 
     std::cout << static_cast<double>(volumePoints) / numSamples << "\n";
 }

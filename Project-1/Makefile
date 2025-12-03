@@ -20,8 +20,8 @@
 OPT ?= -g
 
 # Program configuration values (used by the C++ compilers)
-MIN_BYTES ?= 3
-MAX_BYTES ?= 100
+MIN_BYTES ?= 10000
+MAX_BYTES ?= 100000
 
 # Program execution and test values (used when running the programs)
 NUM_BLOCKS ?= 10000
@@ -65,14 +65,11 @@ WC := /usr/bin/wc -l
 AWK_CMDS := awk.cmds
 AWK := /usr/bin/awk -f $(AWK_CMDS)
 LOG = trials.log
+TIME := /usr/bin/time -f "%e real\t%U user\t%S sys\t%M memory (KB)"
 
 # Configure operating-system specific tools
 ifeq ($(OSTYPE), darwin) # macOS
 	TIME := /usr/bin/time
-endif
-
-ifeq ($(OSTYPE),linux)
-	TIME := /usr/bin/time -f "%e real\t%U user\t%S sys\t%M memory (KB)"
 endif
 
 # Sorry Windows users :-P
@@ -117,7 +114,7 @@ clean:
 #   should execute
 test: targets
 	@ for pgm in $(TARGETS) ; do \
-		result=$$($$pgm $(NUM_BLOCKS)) ;\
+		result=$$(./$$pgm $(NUM_BLOCKS)) ;\
 		$(PRINTF) "%-18s %s\n" "$$pgm:" "$$result" ;\
 	done
 
@@ -127,7 +124,7 @@ test: targets
 #   should execute
 breaks: targets
 	@ for pgm in $(TARGETS) ; do \
-		result=$$($(STRACE) $$pgm $(NUM_BLOCKS) 2>&1 $(GREP) brk | $(WC)) ;\
+		result=$$($(STRACE) ./$$pgm $(NUM_BLOCKS) 2>&1 $(GREP) brk | $(WC)) ;\
 		$(PRINTF) "%-18s %s\n" "$$pgm:" "$$result" ;\
 	done
 
@@ -139,9 +136,9 @@ breaks: targets
 trials: targets
 	@ $(RM) $(LOG) ;\
 	for pgm in $(TARGETS) ; do \
-		$(PRINTF) "%s (list length = %d):\n" $$pgm $(NUM_BLOCKS) ;\
+		$(PRINTF) "%s (list length = %d):\n" ./$$pgm $(NUM_BLOCKS) ;\
 		for t in {1..$(NUM_TRIALS)} ; do \
-			( $(TIME) $$pgm $(NUM_BLOCKS) > /dev/null ) 2>&1 | tee -a $(LOG) ;\
+			( $(TIME) ./$$pgm $(NUM_BLOCKS) > /dev/null ) 2>&1 | tee -a $(LOG) ;\
 		done ;\
 		cat $(LOG) | $(AWK) ;\
 		$(PRINTF) "\n" ;\

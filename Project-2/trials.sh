@@ -4,8 +4,8 @@
 SAMPLES=1000000000
 
 # Data file for mean.out and threaded.out
-#FILENAME=data.bin
-FILENAME=million.bin
+FILENAME=data.bin
+#FILENAME=million.bin
 #FILENAME=tiny.bin
 
 # Configure the script to exit when Control-C is pressed
@@ -24,10 +24,10 @@ run() {
 
 # Time the single-threaded version of the program.  Uncomment the line for
 #   the program you want to run
-run 1 ./mean.out $FILENAME
-# run 1 ./sdf.out -n $SAMPLES 
+#run 1 ./mean.out $FILENAME
+run 1 ./sdf.out -n $SAMPLES 
 
 for i in {2..84..2} ; do
-    run $i ./threaded.out -t $i -f $FILENAME
-    # run $i ./sdf.out -t $i -n $SAMPLES
+   # run $i ./threaded.out -t $i -f $FILENAME
+    run $i ./sdf.out -t $i -n $SAMPLES
 done
