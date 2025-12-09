@@ -19,3 +19,5 @@
     <img src="final_star_screenshot.png" alt="Rotating Star with Colors" title="Rotating Star" style="width:20%; height:auto; display:inline-block;">
   </a>
   <div class="caption">Rotating Star</div>
+
+* When I tried to hve fun with the color, my radius stayed at one value as the star rotated. Once I changed it to a cosign of the time, I finally got the color shifting I was looking for.
