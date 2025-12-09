@@ -19,5 +19,3 @@
     <img src="final_star_screenshot.png" alt="Rotating Star with Colors" title="Rotating Star" style="width:20%; height:auto; display:inline-block;">
   </a>
   <div class="caption">Rotating Star</div>
-
-[![wire test](wireframe_triangle.png)](wire_frame_triangle.html)
