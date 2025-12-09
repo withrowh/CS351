@@ -20,3 +20,4 @@
   </a>
   <div class="caption">Rotating Star</div>
 
+[![wire test](wireframe_triangle.png)](wire_frame_triangle.html)
