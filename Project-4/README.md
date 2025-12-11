@@ -14,4 +14,4 @@ The timing results of iota are not quite what I expected. I had thought the timi
 <div class="caption">Green Julia Set</div>
 
 <img src="original_julia_ppm.png" alt="Original Julia set" style="width:30%; height:auto">
-<div class="caption">Orignal Julia Set</div>a
+<div class="caption">Orignal Julia Set</div>
